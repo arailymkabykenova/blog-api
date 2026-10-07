@@ -1,3 +1,8 @@
-from django.contrib import admin
+from django.contrib.admin import ModelAdmin, register
 
-# Register your models here.
+from apps.auths.models import User
+
+
+@register(User)
+class UserAdmin(ModelAdmin):
+    """register User model in admin panel"""
