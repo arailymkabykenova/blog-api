@@ -7,6 +7,7 @@ site.unregister(Group)
 @register(User)
 class UserAdmin(ModelAdmin):
     """register User model in admin panel"""
+    search_fields=("first_name","last_name","email")
 
 @register(Group)
 class GroupAdmin(ModelAdmin):
