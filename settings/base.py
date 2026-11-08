@@ -33,11 +33,16 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
+THIRD_PARTIES_APPS=[
+    "unfold",
+    "unfold.contrib.filters",
+    "unfold.contrib.forms"
+]
 PROJECT_APPS = [
     "apps.blog",
     "apps.auths",
 ]
-INSTALLED_APPS = DJANGO_APPS + PROJECT_APPS
+INSTALLED_APPS = THIRD_PARTIES_APPS + DJANGO_APPS + PROJECT_APPS 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -111,4 +116,41 @@ MAILERS = {
     "default": {
         "BACKEND": "django.core.mail.backends.console.EmailBackend",
     },
+}
+UNFOLD={
+    "SITE_TITLE": "Blog API",
+    "SITE_HEADER": "Learning how to build",
+    "SITE_SUBHEADER": "Django project",
+    "SITE_SYMBOL": "diamond",
+    "COLORS": {
+        "primary":
+        {
+            "50": "#f9f4f4",
+            "100": "#f0e3e3",
+            "200": "#dfc6c6",
+            "300": "#ca9e9e",
+            "400": "#b37575",
+            "500": "#9c4c4c",
+            "600": "#8d3030",
+            "700": "#801919",
+            "800": "#691414",
+            "900": "#531010",
+            "950": "#360b0b",
+        }
+    },
+    "SITE_DROPDOWN": [{
+    "icon": "book",
+    "title": "Deep into the code",
+    "link": "https://github.com/arailymkabykenova/blog-api/tree/hw2"
+    },
+    {"icon": "tune",
+        "title": "Deep into the UNFOLD",
+        "link": "https://unfoldadmin.com/docs/"
+        }
+    ],
+    "COMMAND": {
+        "search_models": True,  
+        "show_history": True,  
+    },
+    
 }

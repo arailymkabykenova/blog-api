@@ -1,4 +1,5 @@
-from django.contrib.admin import ModelAdmin, register
+from unfold.admin import ModelAdmin
+from django.contrib.admin import register
 
 from apps.blog.models import Category, Comment, Post, Tag
 
