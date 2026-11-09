@@ -103,6 +103,50 @@ All variables use the `BLOG_` prefix.
   - a post can have many tags, a tag can belong to many posts (`ManyToMany`).
 - **Comment** — belongs to a post and an author; deleted together with its post (`CASCADE`).
 
+## `HW2`
+## Seeding
+
+Fill the database with fake data:
+
+    python manage.py seed
+
+| Argument     | Default | Description                         |
+|--------------|---------|-------------------------------------|
+| `--users`    | 20      | Number of users to create           |
+| `--posts`    | 100     | Number of posts to create           |
+| `--comments` | 500     | Number of comments to create        |
+| `--clear`    | off     | Delete existing data before seeding (superusers are kept) |
+
+Example:
+
+    python manage.py seed --clear --users 50 --posts 300 --comments 1500
+      All data cleared
+      Users 50 created.
+      Tags 20 created.
+      Categories 8 created.
+      Posts 300 created.
+      Comments 1500 created.
+      Done in 0.47 seconds
+
+All seeded users have the password `12345`.
+
+## Admin
+
+The admin uses Django Unfold.
+
+### Dashboard
+
+
+### Post list with filters
+![Post list](docs/screenshots/post-filters.png)
+
+### Post edit page
+![Post edit](docs/screenshots/post-edit.png)
+
+### User list
+![User list](docs/screenshots/user-list.png)
+
+
 ## AI usage
 
 AI (Claude) was used for explanations of concepts and for code review.

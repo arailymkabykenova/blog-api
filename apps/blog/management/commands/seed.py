@@ -1,14 +1,14 @@
 
-from faker import Faker
-from random import Random
-from random import choice
+from random import Random, choice
 from time import perf_counter
-from django.utils.text import slugify
-from django.core.management.base import BaseCommand, CommandError, CommandParser
-from django.contrib.auth.hashers import make_password
-from apps.auths.models import User
-from apps.blog.models import Category, Tag, Post, Comment, StatusType 
 
+from django.contrib.auth.hashers import make_password
+from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.utils.text import slugify
+from faker import Faker
+
+from apps.auths.models import User
+from apps.blog.models import Category, Comment, Post, StatusType, Tag
 
 
 class Command(BaseCommand):

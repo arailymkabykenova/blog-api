@@ -2,8 +2,11 @@ from django.contrib.admin import register, site
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import Group
 from unfold.admin import ModelAdmin
-from unfold.forms import UserCreationForm, UserChangeForm, AdminPasswordChangeForm
+from unfold.contrib.filters.admin import BooleanRadioFilter
+from unfold.forms import AdminPasswordChangeForm, UserChangeForm, UserCreationForm
+
 from apps.auths.models import User
+
 site.unregister(Group)
 
 @register(User)
@@ -13,7 +16,7 @@ class UserAdmin(BaseUserAdmin,ModelAdmin):
     form=UserChangeForm
     add_form=UserCreationForm
     change_password_form=AdminPasswordChangeForm
-
+    list_filter=(("is_active",BooleanRadioFilter),("is_staff",BooleanRadioFilter))
     ordering=("email",)
     list_display=("email","first_name","last_name","is_staff","is_active")
     fieldsets=(
