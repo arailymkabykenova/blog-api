@@ -3,6 +3,7 @@ from apps.blog.models import Post,Category,StatusType
 from apps.auths.models import User
 
 NEWEST_POSTS_COUNT=5
+PAGE_SIZE=10
 def categories_by_name()->QuerySet[Category]:
     """Return categories by name"""
     return Category.objects.order_by("name")
@@ -23,4 +24,16 @@ def has_drafts()->bool:
     """Return true if at least one draft exists"""
     return Post.objects.filter(status=StatusType.DRAFT).exists()
 
-QUERIES={1:categories_by_name, 2:published_posts, 3:newest_published_posts, 5:active_users_count, 6:has_drafts}
+def post_by_slug(slug:str)->Post|None:
+    """Return post by slug"""
+    return Post.objects.filter(slug=slug).first()
+
+def published_posts_page(page:int)->QuerySet[Post]:
+    """Return posts by page"""
+    start_page=(page-1)*PAGE_SIZE
+    return published_posts()[start_page:start_page+PAGE_SIZE]
+
+
+
+
+QUERIES={1:categories_by_name, 2:published_posts, 3:newest_published_posts, 4:post_by_slug, 5:active_users_count, 6:has_drafts, 7:published_posts_page}

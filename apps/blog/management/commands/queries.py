@@ -1,11 +1,14 @@
-
+from typing import Any
 from django.core.management.base import BaseCommand,CommandError,CommandParser
 from django.db.models import QuerySet
 from django.test.utils import CaptureQueriesContext
 from django.db import connection
 from apps.blog.queries import QUERIES
+from apps.blog.models import Post
 
 MAX_LENGTH_OF_PRINT=5
+PAGE_START=2
+
 class Command(BaseCommand):
     help="Run needed function by number"
 
@@ -19,7 +22,14 @@ class Command(BaseCommand):
             action="store_true"
 
         )
-      
+
+    def get_query_arguments(self)->dict[int,dict[str,Any]]:
+        return{
+            4:{"slug":Post.objects.values_list("slug",flat=True).first()},
+            7:{"page":PAGE_START}
+        }
+
+    
 
     def handle(self,*args,**options)->None:
         number=options["number"]
@@ -31,10 +41,12 @@ class Command(BaseCommand):
         else:
             numbers=list(QUERIES)
 
+        arguments_by_number=self.get_query_arguments()
         for current in numbers:
             function=QUERIES[current]
+            arguments=arguments_by_number.get(current,{})
             with CaptureQueriesContext(connection) as context:
-                result=function()
+                result=function(**arguments)
                 if isinstance(result,QuerySet):
                     result=list(result)
 
