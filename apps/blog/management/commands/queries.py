@@ -6,7 +6,8 @@ from django.utils import timezone
 from django.test.utils import CaptureQueriesContext
 from django.db import connection
 from apps.blog.queries import QUERIES
-from apps.blog.models import Post,Category
+from apps.blog.models import Post, StatusType
+from apps.auths.models import User
 
 MAX_LENGTH_OF_PRINT=5
 PAGE_START=2
@@ -41,7 +42,8 @@ class Command(BaseCommand):
             11:{"slugs":SAMPLE_CATEGORY_SLUGS},
             12:{"year":YEAR,"month":MONTH},
             13:{"days":DAY_IN_MONTH},
-            14:{"start":END_DATE-timedelta(days=DAY_IN_MONTH),"end":END_DATE}
+            14:{"start":END_DATE-timedelta(days=DAY_IN_MONTH),"end":END_DATE},
+            15:{"email":User.objects.filter(posts__status=StatusType.PUBLISHED).values_list("email", flat=True).first()}
         }
 
     

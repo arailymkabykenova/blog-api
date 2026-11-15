@@ -64,8 +64,12 @@ def posts_between(start:date,end:date)->QuerySet[Post]:
     """Return posts created from start to end"""
     return Post.objects.filter(created_at__date__range=(start,end))
 
+def author_published_posts(email:str)->QuerySet[Post]:
+    """Return published posts of the author with this email"""
+    return Post.objects.filter(status=StatusType.PUBLISHED,author__email__iexact=email)
+
 
 
 QUERIES={1:categories_by_name, 2:published_posts, 3:newest_published_posts, 4:post_by_slug, 5:active_users_count, 6:has_drafts, 7:published_posts_page,
          8:posts_with_word_in_title, 9:users_with_email_domain, 10:posts_without_category,11:categories_by_slug, 12:posts_in_month, 13:posts_last_days,
-         14:posts_between}
+         14:posts_between, 15:author_published_posts}
