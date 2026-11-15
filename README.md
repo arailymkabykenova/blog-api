@@ -151,3 +151,40 @@ The admin uses Django Unfold.
 
 AI (Claude) was used for explanations of concepts and for code review.
 The code and design decisions are my own.
+
+
+## Queries
+
+The `queries` command runs the ORM queries from `apps/blog/queries.py`.
+For each query it prints the number, the function name, how many SQL queries it made,
+and the result (first 5 rows and the total number of rows).
+
+```
+python manage.py queries                    # run all queries
+python manage.py queries --number 1         # run only query 1
+python manage.py queries --number 1 --sql   # also print the SQL
+```
+
+Example:
+
+```
+#1 categories_by_name - 1 SQL query
+SELECT "blog_category"."id", "blog_category"."name", "blog_category"."slug" FROM "blog_category" ORDER BY "blog_category"."name" ASC
+ Career
+ Databases
+ DevOps
+ Django
+ Frontend
+ (8 rows)
+```
+
+### Status
+
+- Part 1: realistic dates in `seed` — done
+- Part 2: `queries` command (`--number`, `--sql`, sample arguments) — done
+- Part 3: queries 1–15 — done; queries 16–50 — not done
+
+## AI usage
+
+AI (Claude) explained Django ORM theory and reviewed my code.
+I wrote the code myself and can explain every line.
