@@ -1,9 +1,11 @@
 
 from random import Random, choice
 from time import perf_counter
+from datetime import timedelta
 
 from django.contrib.auth.hashers import make_password
 from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.utils import timezone
 from django.utils.text import slugify
 from faker import Faker
 
@@ -45,6 +47,11 @@ class Command(BaseCommand):
     PARAGRAPH_LENGTH=3
     COMMENT_SENTENCES_LENGTH_MAX=3
     COMMENT_SENTENCES_LENGTH_MIN=1
+
+    DAYS_IN_YEAR=365
+    EDITED_POSTS_PROPORTION=0.3
+    MAX_EDIT_DELAY_DAYS=30
+    MIN_EDIT_DELAY_DAYS=1
     
     def create_email(self,first_name:str,last_name:str)->str:
         return f"{first_name.lower()}.{last_name.lower()}@"+ choice(self.MAIL_BOX_DOMAINS)
@@ -101,7 +108,7 @@ class Command(BaseCommand):
                 tags_to_create.append(Tag(name=name,slug=slugify(name)))
         return len(Tag.objects.bulk_create(tags_to_create))
 
-    def generate_posts(self,number:int)->int:
+    def generate_posts(self,number:int)->list[Post]:
         posts_to_create:list[Post]=[]
         users=list(User.objects.all())
         if len(users)==0:
@@ -142,22 +149,31 @@ class Command(BaseCommand):
             
             posts_to_create.append(post)
         created_posts=Post.objects.bulk_create(posts_to_create)
+        now=timezone.now()
+        max_seconds=int(timedelta(days=self.DAYS_IN_YEAR).total_seconds())
         for post in created_posts:
+            post.created_at=now-timedelta(seconds=self.randomizer.randint(0,max_seconds))
+            if self.randomizer.random()<self.EDITED_POSTS_PROPORTION:
+                updated_at=post.created_at+timedelta(days=self.randomizer.randint(self.MIN_EDIT_DELAY_DAYS,self.MAX_EDIT_DELAY_DAYS))
+                post.updated_at=min(updated_at,now)
+            else:
+                post.updated_at=post.created_at
             num_tags=self.randomizer.randint(0,min(self.MAX_TAGS_PER_POST,len(tags)))
             post_tags=self.randomizer.sample(tags,num_tags)
             post.tags.set(post_tags)
-        return len(created_posts)
+        Post.objects.bulk_update(created_posts,["created_at","updated_at"])
+        return created_posts
 
-    def generate_comments(self,number:int)->int:
+    def generate_comments(self,number:int,posts:list[Post])->int:
         users=list(User.objects.all())
         if len(users)==0:
             raise CommandError("No users found. Run seed command")
-        posts=list(Post.objects.filter(status=StatusType.PUBLISHED))
-        if len(posts)==0:
-            raise CommandError("No posts found. Run seed command")
+        published_posts=[post for post in posts if post.status==StatusType.PUBLISHED]
+        if len(published_posts)==0:
+            raise CommandError("No published posts found. ")
         comments_to_create:list[Comment]=[]
         for _ in range(number):
-            post=self.randomizer.choice(posts)
+            post=self.randomizer.choice(published_posts)
             author=self.randomizer.choice(users)
             body=" ".join(self.faker.sentences(nb=self.randomizer.randint(self.COMMENT_SENTENCES_LENGTH_MIN,self.COMMENT_SENTENCES_LENGTH_MAX)))
             comment=Comment(
@@ -166,7 +182,13 @@ class Command(BaseCommand):
                 body=body
             )
             comments_to_create.append(comment)
-        return len(Comment.objects.bulk_create(comments_to_create))
+        created_comments=Comment.objects.bulk_create(comments_to_create)
+        now=timezone.now()
+        for comment in created_comments:
+            created_interval=int((now-comment.post.created_at).total_seconds())
+            comment.created_at=comment.post.created_at+timedelta(seconds=self.randomizer.randint(0,created_interval))
+        Comment.objects.bulk_update(created_comments,["created_at"])
+        return len(created_comments)
 
     def add_arguments(self, parser:CommandParser)->None:
         parser.add_argument(
@@ -213,12 +235,12 @@ class Command(BaseCommand):
         generated_tags=self.generate_tags()
         generated_categories=self.generate_categories()
         generated_posts=self.generate_posts(posts_count)
-        generated_comments=self.generate_comments(comments_count)
+        generated_comments=self.generate_comments(comments_count,generated_posts)
 
         self.stdout.write(f"Users {generated_users} created.")
         self.stdout.write(f"Tags {generated_tags} created.")
         self.stdout.write(f"Categories {generated_categories} created.")
-        self.stdout.write(f"Posts {generated_posts} created.")
+        self.stdout.write(f"Posts {len(generated_posts)} created.")
         self.stdout.write(f"Comments {generated_comments} created.")
         self.stdout.write(
             self.style.SUCCESS(f"Done in {perf_counter()-start_time:.2f} seconds")

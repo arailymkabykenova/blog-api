@@ -49,7 +49,7 @@ class CommentAdmin(ModelAdmin):
     search_fields=("body","author__email","post__title")
     autocomplete_fields=("author","post")
     list_select_related=("post","author")
-    list_filter=(("created_at",RangeDateTimeFilter))
+    list_filter=(("created_at",RangeDateTimeFilter),)
     list_filter_submit=True
     @display(
                 description="Body",
