@@ -33,7 +33,13 @@ DJANGO_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 ]
-THIRD_PARTIES_APPS = ["unfold", "unfold.contrib.filters", "unfold.contrib.forms"]
+THIRD_PARTIES_APPS = [
+    "unfold", 
+    "unfold.contrib.filters", 
+    "unfold.contrib.forms",
+    "rest_framework",
+    "rest_framework_simplejwt"
+    ]
 PROJECT_APPS = [
     "apps.blog",
     "apps.auths",
@@ -105,14 +111,6 @@ USE_TZ = True
 STATIC_URL = "static/"
 
 
-# Email
-# https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
-
-MAILERS = {
-    "default": {
-        "BACKEND": "django.core.mail.backends.console.EmailBackend",
-    },
-}
 UNFOLD = {
     "SITE_TITLE": "Blog API",
     "SITE_HEADER": "Learning how to build",

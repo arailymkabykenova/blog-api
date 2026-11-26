@@ -1,6 +1,9 @@
 asgiref==3.12.1
 Django==6.1.1
 python-decouple==3.8
-ruff==0.16.10
 sqlparse==0.6.0
 django-unfold==0.110.1
+celery[redis]==5.7.0
+djangorestframework==3.18.3
+djangorestframework-simplejwt==5.5.1
+redis==8.2.0
