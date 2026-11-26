@@ -56,6 +56,7 @@ class UserAdmin(BaseUserAdmin, ModelAdmin):
                     "first_name",
                     "last_name",
                     "password1",
+                    "password2"
                 ),
             },
         ),
